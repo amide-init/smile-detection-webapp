@@ -3,11 +3,12 @@ import cv2
 import numpy as np  
 from keras.preprocessing.image import img_to_array
 from keras.models import load_model
+import imutils
 
 app = Flask(__name__)
 camera = cv2.VideoCapture(-1)
 face_cascade = cv2.CascadeClassifier('harcascades/haarcascade_frontalface_default.xml')
-model = load_model('mask_detector.model')
+model = load_model('lenet.hdf5')
 
 def generate_frames():
     while True:
@@ -28,9 +29,9 @@ def generate_frames():
                 roi = np.expand_dims(roi, axis=0)
                 
                 (notSmiling, smiling) = model.predict(roi)[0]
-                label = "Smiling" if smiling > notSmiling else "Not Smiling"
-
-                cv2.putText(frame,'Aamin',(10,200), font, 2, (200,255,155), 5, cv2.LINE_AA)
+                label = "Smiling :)" if smiling > notSmiling else "Not Smiling :("
+                color = (0, 255, 0) if smiling > notSmiling else (0, 0, 255)
+                cv2.putText(frame,label,(10,200), font, 2, color, 3, cv2.LINE_AA)
                 cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
         ret, buffer = cv2.imencode('.jpg', frame)
         frame = buffer.tobytes()
