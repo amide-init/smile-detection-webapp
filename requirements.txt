@@ -4,3 +4,4 @@ keras
 numpy
 imutils
 gunicorn
+tensorflow-cpu
